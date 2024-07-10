@@ -1,0 +1,9 @@
+feedparser
+spacy
+schedule
+requests
+beautifulsoup4
+mysql-connector-python
+pyyaml
+google-cloud-language
+

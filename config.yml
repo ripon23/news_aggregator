@@ -1,0 +1,4 @@
+feeds:
+  urls:
+    - 'http://feeds.bbci.co.uk/news/rss.xml'
+    - 'https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml'
