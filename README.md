@@ -116,7 +116,7 @@ Contributions are welcome! Please feel free to submit a pull request or open an 
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-## Compariason Spacy Vs Google Service
+## Comparison Spacy Vs Google Service
     Case-1: 
     ---------
     News Desc: The US president announces more military aid for Ukraine, warning "autocrats have overturned global order".
