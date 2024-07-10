@@ -25,21 +25,28 @@ This project is a news aggregator that fetches news articles from various RSS fe
     cd news-aggregator
     ```
 
-2. **Install the required Python packages**:
+2. **Create and activate virtual env(Optional):**
+
+    ```sh
+    python -m venv venv
+    . ./venv/bin/activate
+    ```
+
+3. **Install the required Python packages**:
     ```
     pip install -r requirements.txt
     ```
-3. **Download the spaCy NLP model**:
+4. **Download the spaCy NLP model**:
     ```sh
     python -m spacy download en_core_web_sm
     ```
 
-4. **Create and configure the MySQL database**:
+5. **Create and configure the MySQL database**:
     ```sql
     CREATE DATABASE rss_feed_news;
     ```
 
-5. **Update the database credentials** in the script if necessary:
+6. **Update the database credentials** in the script if necessary:
     ```python
     conn = mysql.connector.connect(
         host='localhost',
@@ -49,7 +56,7 @@ This project is a news aggregator that fetches news articles from various RSS fe
     )
     ```
 
-6. **Create a `config.yml` file** to specify the RSS feed URLs:
+7. **Create a `config.yml` file** to specify the RSS feed URLs:
     ```yaml
     feeds:
       urls:
