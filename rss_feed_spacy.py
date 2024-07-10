@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 import spacy
 from datetime import datetime
 import yaml
+from dateutil import parser
 
 # Initialize spaCy NLP model
 nlp = spacy.load('en_core_web_sm')
@@ -24,7 +25,7 @@ def init_db():
                       id INT AUTO_INCREMENT PRIMARY KEY,
                       title TEXT,
                       description TEXT,
-                      pub_date TEXT,
+                      pub_date DATETIME,
                       source_url TEXT,
                       topics TEXT,
                       named_entities TEXT
@@ -69,6 +70,8 @@ def article_exists(cursor, title, pub_date):
     return count > 0
 
 # Store articles in the database
+from datetime import datetime
+
 def store_articles(articles):
     conn = mysql.connector.connect(
         host='localhost',
@@ -80,22 +83,29 @@ def store_articles(articles):
     for article in articles:
         title = article['title']
         description = article['description']
-        pub_date = article['pub_date']
+        pub_date_str = article['pub_date']
         source_url = article['source_url']
         
+        # Convert pub_date_str to datetime object using dateutil.parser
+        pub_date = parser.parse(pub_date_str)
+        
+        # Convert datetime object to desired string format for storage
+        pub_date_str_formatted = pub_date.strftime('%Y-%m-%d %H:%M:%S')
+        
         # Check if the article already exists
-        if article_exists(cursor, title, pub_date):
+        if article_exists(cursor, title, pub_date_str_formatted):
             print(f"Skipping duplicate article: {title}")
             continue
         
         topics, named_entities = extract_topics_and_entities(description)
-        #print(f"Description: {description} Topics:{topics}")
+        
         cursor.execute('''INSERT INTO articles (title, description, pub_date, source_url, topics, named_entities)
                           VALUES (%s, %s, %s, %s, %s, %s)''', 
-                          (title, description, pub_date, source_url, str(topics), str(named_entities)))
+                          (title, description, pub_date_str_formatted, source_url, str(topics), str(named_entities)))
     conn.commit()
     cursor.close()
     conn.close()
+
 
 # Filter articles based on keywords or publication date
 def filter_articles(keyword=None, start_date=None, end_date=None):

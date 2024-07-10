@@ -6,7 +6,7 @@ This project is a news aggregator that fetches news articles from various RSS fe
 
 - Fetch news articles from configurable RSS feed URLs
 - Store articles in a MySQL database
-- Extract topics and named entities from article content using spaCy
+- Extract topics and named entities from article content using spaCy and Google ML Services (Seperated py file)
 - Filter articles based on keywords or publication dates
 - Avoid duplicate entries in the database
 - Periodically fetch and process new articles
@@ -15,23 +15,17 @@ This project is a news aggregator that fetches news articles from various RSS fe
 
 - Python 3.x
 - MySQL
-- Libraries: `feedparser`, `mysql-connector-python`, `schedule`, `requests`, `beautifulsoup4`, `spacy`, `pyyaml`
+- Libraries: `feedparser`, `mysql-connector-python`, `schedule`, `requests`, `beautifulsoup4`, `spacy`, `pyyaml`, `google-cloud-language`, `flask`, `plotly`, `pandas`, `python-dateutil`
 
 ## Installation
 
 1. **Clone the repository**:
     ```sh
-    git clone https://github.com/yourusername/news-aggregator.git
+    git clone https://github.com/ripon23/news_aggregator.git
     cd news-aggregator
     ```
 
 2. **Install the required Python packages**:
-    ```sh
-    pip install feedparser mysql-connector-python schedule requests beautifulsoup4 spacy pyyaml
-    ```
-    
-    or
-
     ```
     pip install -r requirements.txt
     ```
@@ -65,15 +59,21 @@ This project is a news aggregator that fetches news articles from various RSS fe
 
 ## Usage
 
-1. **Initialize the database**:
-    ```python
-    python script_name.py
+
+7. **Run the script** to fetch and process articles:
+
+    Topics generation using Spacy:
+
+    ```sh
+    python rss_feed_spacy.py
     ```
 
-2. **Run the script** to fetch and process articles:
-    ```sh
-    python script_name.py
+    Topics generation using Google Service (Required google_service_account_key.json):
+   
+   ```sh
+    python rss_feed_google_service.py
     ```
+
 
 ## Code Overview
 
@@ -87,15 +87,15 @@ The `fetch_articles` function retrieves articles from the specified RSS feed URL
 
 ### Storing Articles
 
-The `store_articles` function stores the fetched articles in the MySQL database, avoiding duplicates by checking if an article with the same title and publication date already exists.
+The `store_articles` function stores the fetched articles in the MySQL database, avoiding duplicates by checking if an article with the same title and publication date already exists. For visualization I use python flask framework.
 
 ### Extracting Topics and Named Entities
 
-The `extract_topics_and_entities` function uses the spaCy library to extract topics and named entities from the article content.
+The `extract_topics_and_entities` function uses the spaCy library(rss_feed_spacy.py) and Google Service(rss_feed_google_service.py) to extract topics and named entities from the article content.
 
 ### Filtering Articles
 
-The `filter_articles` function allows filtering of stored articles based on keywords or publication dates.
+The `filter_articles` function allows filtering of stored articles based on keywords or publication dates (Flask).
 
 ### Periodic Fetching
 
@@ -109,3 +109,19 @@ Contributions are welcome! Please feel free to submit a pull request or open an 
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
+## Compariason Spacy Vs Google Service
+    Case-1: 
+    ---------
+    News Desc: The US president announces more military aid for Ukraine, warning "autocrats have overturned global order".
+
+    Topics(Google ML Services): military aid, president, US, order, Ukraine, autocrats
+    Topics(Spacy): president, announce, military, aid, Ukraine, warn, autocrat, overturn, global, order
+
+## Visualization using flask
+    ```sh
+    python app.py
+    ```
+* Running on http://127.0.0.1:5000
+
+## Create google service point account: 
+    https://console.cloud.google.com/apis/credentials

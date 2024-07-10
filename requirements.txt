@@ -6,4 +6,7 @@ beautifulsoup4
 mysql-connector-python
 pyyaml
 google-cloud-language
-
+flask
+plotly
+pandas
+python-dateutil

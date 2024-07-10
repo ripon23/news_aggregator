@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Articles Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>News Articles Dashboard</h1>
+    <form method="post" action="/">
+        <label for="keyword">Keyword:</label>
+        <input type="text" id="keyword" name="keyword" value="{{ request.form.get('keyword', '') }}">
+        
+        <label for="start_date">Start Date:</label>
+        <input type="date" id="start_date" name="start_date" value="{{ request.form.get('start_date', '') }}">
+        
+        <label for="end_date">End Date:</label>
+        <input type="date" id="end_date" name="end_date" value="{{ request.form.get('end_date', '') }}">
+        
+        <button type="submit">Filter</button>
+        <button type="button" class="clear_filter" onclick="window.location.href='/'">Clear Filters</button>
+    </form>
+    <div>
+        <h2>Articles</h2>
+        <ul>
+            {% for article in articles %}
+                <li>
+                    <h3>{{ article.title }}</h3>
+                    <p><strong>Published:</strong> {{ article.pub_date }}</p>
+                    <p><strong>Description:</strong> {{ article.description }}</p>
+                    <p><strong>Source:</strong> <a href="{{ article.source_url }}">{{ article.source_url }}</a></p>
+                    <p><strong>Topics:</strong> {{ article.topics }}</p>
+                    <p><strong>Named Entities:</strong> {{ article.named_entities }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>

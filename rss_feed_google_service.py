@@ -8,6 +8,7 @@ from bs4 import BeautifulSoup
 import spacy
 from datetime import datetime
 import yaml
+from dateutil import parser
 from google.cloud import language_v1
 
 # Set up Google Cloud credentials
@@ -28,11 +29,11 @@ def init_db():
         database='rss_feed_news'
     )
     cursor = conn.cursor()
-    cursor.execute('''CREATE TABLE IF NOT EXISTS articles (
+    cursor.execute('''CREATE TABLE IF NOT EXISTS articles2 (
                       id INT AUTO_INCREMENT PRIMARY KEY,
                       title TEXT,
                       description TEXT,
-                      pub_date TEXT,
+                      pub_date DATETIME,
                       source_url TEXT,
                       topics TEXT,
                       named_entities TEXT
@@ -41,7 +42,7 @@ def init_db():
     cursor.close()
     conn.close()
 
-# Fetch articles from RSS feeds
+# Fetch articles2 from RSS feeds
 def fetch_articles(feed_urls):
     articles = []
     for url in feed_urls:
@@ -77,7 +78,7 @@ def extract_named_entities(text):
 
 # Check if article exists in the database
 def article_exists(cursor, title, pub_date):
-    query = "SELECT COUNT(*) FROM articles WHERE title = %s AND pub_date = %s"
+    query = "SELECT COUNT(*) FROM articles2 WHERE title = %s AND pub_date = %s"
     cursor.execute(query, (title, pub_date))
     count = cursor.fetchone()[0]
     return count > 0
@@ -94,20 +95,26 @@ def store_articles(articles):
     for article in articles:
         title = article['title']
         description = article['description']
-        pub_date = article['pub_date']
+        pub_date_str = article['pub_date']
         source_url = article['source_url']
         
+        # Convert pub_date_str to datetime object using dateutil.parser
+        pub_date = parser.parse(pub_date_str)
+        
+        # Convert datetime object to desired string format for storage
+        pub_date_str_formatted = pub_date.strftime('%Y-%m-%d %H:%M:%S')
+        
         # Check if the article already exists
-        if article_exists(cursor, title, pub_date):
+        if article_exists(cursor, title, pub_date_str_formatted):
             print(f"Skipping duplicate article: {title}")
             continue
         
         topics = extract_topics(description)
         named_entities = extract_named_entities(description)
-        print(f"Description: {description} Topics:{topics}")
-        # cursor.execute('''INSERT INTO articles (title, description, pub_date, source_url, topics, named_entities)
-        #                   VALUES (%s, %s, %s, %s, %s, %s)''', 
-        #                   (title, description, pub_date, source_url, ', '.join(topics), str(named_entities)))
+        #print(f"Description: {description} Topics:{topics}")
+        cursor.execute('''INSERT INTO articles2 (title, description, pub_date, source_url, topics, named_entities)
+                          VALUES (%s, %s, %s, %s, %s, %s)''', 
+                          (title, description, pub_date_str_formatted, source_url, ', '.join(topics), str(named_entities)))
     conn.commit()
     cursor.close()
     conn.close()
@@ -121,7 +128,7 @@ def filter_articles(keyword=None, start_date=None, end_date=None):
         database='rss_feed_news'
     )
     cursor = conn.cursor()
-    query = "SELECT * FROM articles WHERE 1=1"
+    query = "SELECT * FROM articles2 WHERE 1=1"
     params = []
 
     if keyword:
