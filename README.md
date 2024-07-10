@@ -99,7 +99,7 @@ The `filter_articles` function allows filtering of stored articles based on keyw
 
 ### Periodic Fetching
 
-The script uses the `schedule` library to periodically fetch and process new articles from the RSS feeds.
+The script uses the `schedule` library to periodically (1 hour) fetch and process new articles from the RSS feeds.
 
 ## Contributing
 
@@ -118,9 +118,11 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
     Topics(Spacy): president, announce, military, aid, Ukraine, warn, autocrat, overturn, global, order
 
 ## Visualization using flask
-    ```sh
-    python app.py
-    ```
+
+   ```sh
+   python app.py
+   ```
+
 * Running on http://127.0.0.1:5000
 
 ## Create google service point account: 
